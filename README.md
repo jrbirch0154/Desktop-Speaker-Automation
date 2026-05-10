@@ -74,8 +74,8 @@ Create two tasks in Windows Task Scheduler:
 
 | Task | Trigger1 | Trigger2 | Bat File |
 |------|---------|----------|----------|
-| Speakers On - Startup | At log on of any user | At workstation unlock of any user | speakers_on.bat |
-| Speakers Off - Shutdown | System, User32, ID 1074 | At workstation lock of any user | speakers_off.bat |
+| Speakers On | At log on of any user | At workstation unlock of any user | speakers_on.bat |
+| Speakers Off | System, User32, ID 1074 | At workstation lock of any user | speakers_off.bat |
 
 
 
