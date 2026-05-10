@@ -72,10 +72,10 @@ python "C:\path\to\speaker.py" off
 
 Create two tasks in Windows Task Scheduler:
 
-| Task | Trigger | Bat File |
-|------|---------|----------|
-| Speakers On - Startup | Trigger1: At log on (5s delay) | Trigger2: At workstation unlock | speakers_on.bat |
-| Speakers Off - Shutdown | Trigger1: System, User32, ID 1074 | Trigger2: At workstation lock | speakers_off.bat |
+| Task | Trigger1 | Trigger2 | Bat File |
+|------|---------|----------|----------|
+| Speakers On - Startup | At log on of any user | At workstation unlock of any user | speakers_on.bat |
+| Speakers Off - Shutdown | System, User32, ID 1074 | At workstation lock of any user | speakers_off.bat |
 
 
 
