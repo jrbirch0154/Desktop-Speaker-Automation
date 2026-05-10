@@ -74,7 +74,7 @@ Create four tasks in Windows Task Scheduler:
 
 | Task | Trigger | Bat File |
 |------|---------|----------|
-| Speakers On - Startup | At startup (30s delay) | speakers_on.bat |
+| Speakers On - Startup | At log on (5s delay) | speakers_on.bat |
 | Speakers Off - Shutdown | Event: System, User32, ID 1074 | speakers_off.bat |
 
 
