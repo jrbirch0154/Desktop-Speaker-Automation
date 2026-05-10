@@ -6,6 +6,7 @@ import requests
 import sys
 from dotenv import load_dotenv
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 
@@ -54,9 +55,13 @@ for numb in speakers:
     URL.append(f'https://api.smartthings.com/v1/devices/{numb}/commands')
     
     
-def speakers(body,header=HEADERS,URL=URL):
-    for url in URL:
-        requests.post(url,headers=HEADERS,data=body)
+def speakers(body,headers=HEADERS,urls=URL):
+    def post(url):
+        requests.post(url,headers=headers,data=body,timeout=3)
+        
+    with ThreadPoolExecutor() as executor:
+        executor.map(post, urls)
+        
         
         
 if __name__ == '__main__':
