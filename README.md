@@ -1,6 +1,6 @@
 # Desktop Speaker Automation
 
-Automatically turns on/off desktop speakers (and other smart devices) based on PC state using the SmartThings API and Windows Task Scheduler. This was built to solve a personal annoyance. My speakers draw phantom power and emit a quiet but audible buzz when left on. I automated them to follow my PC's startup/shutdown cycle as a quick fix.
+Automatically turns on/off desktop speakers (and other smart devices) based on PC state using the SmartThings API and Windows Task Scheduler. This was built to solve a personal annoyance. My speakers draw phantom power and emit a quiet but audible buzz when left on, I automated them to follow my PC's startup/shutdown cycle as a quick fix.
 
 ## What It Does
 
@@ -31,7 +31,7 @@ pip install requests python-dotenv
 - Go to [account.smartthings.com](https://account.smartthings.com)
 - Personal Access Tokens → Generate New Token
 - Give it Devices (read + execute) permissions
-- Copy the token — it's only shown once
+- Copy the token. It's only shown once
 
 **2. Get your device IDs**
 
