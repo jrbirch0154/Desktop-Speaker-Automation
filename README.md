@@ -70,12 +70,13 @@ python "C:\path\to\speaker.py" off
 
 **5. Set up Task Scheduler**
 
-Create four tasks in Windows Task Scheduler:
+Create two tasks in Windows Task Scheduler:
 
 | Task | Trigger | Bat File |
 |------|---------|----------|
-| Speakers On - Startup | At log on (5s delay) | speakers_on.bat |
-| Speakers Off - Shutdown | Event: System, User32, ID 1074 | speakers_off.bat |
+| Speakers On - Startup | Trigger1: At log on (5s delay) | Trigger2: At workstation unlock | speakers_on.bat |
+| Speakers Off - Shutdown | Trigger1: System, User32, ID 1074 | Trigger2: At workstation lock | speakers_off.bat |
+
 
 
 ## Usage
