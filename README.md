@@ -1,6 +1,6 @@
 # Desktop Speaker Automation
 
-Automatically turns on/off desktop speakers (and other smart devices) based on PC state using the SmartThings API and Windows Task Scheduler. This was built to solve a personal annoyance. My speakers draw phantom power and emit a quiet but audible buzz when left on. I automated them to follow my PC's lock/unlock and startup/shutdown cycle as a quick fix.
+Automatically turns on/off desktop speakers (and other smart devices) based on PC state using the SmartThings API and Windows Task Scheduler. This was built to solve a personal annoyance. My speakers draw phantom power and emit a quiet but audible buzz when left on. I automated them to follow my PC's startup/shutdown cycle as a quick fix.
 
 ## What It Does
 
