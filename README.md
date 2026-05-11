@@ -2,54 +2,48 @@
 
 Automatically turns on/off desktop speakers (and other smart devices) based on PC state using the SmartThings API and Windows Task Scheduler. This was built to solve a personal annoyance. My speakers draw phantom power and emit a quiet but audible buzz when left on, I automated them to follow my PC's startup/shutdown cycle as a quick fix.
 
-## What It Does
-
-- Turns on left speaker, right speaker, and subwoofer when the PC starts or unlocks
-- Turns them off when the PC shuts down or locks
-- All device IDs and credentials are stored securely in a `.env` file
-
 ## How It Works
 
-The script hits the SmartThings REST API to send on/off commands to each speaker outlet on a Kasa HS300 smart power strip. It's triggered automatically by Windows Task Scheduler on startup, shutdown, lock, and unlock events.
+The script communicates directly with a Kasa HS300 smart power strip over the local network using the `python-kasa` library. No cloud account or API token required. It targets three specific outlets by name and toggles them simultaneously using `asyncio.gather()`.
+
+Windows Task Scheduler triggers the script on four events:
+- Startup → speakers on
+- Log in → speakers on
+- Lock → speakers off
+- Shutdown → speakers off
 
 ## Requirements
 
 - Python 3.x (Anaconda recommended)
-- A Samsung SmartThings account
-- A Kasa HS300 (or any SmartThings-compatible smart plug)
+- Kasa HS300 smart power strip
 - Windows Task Scheduler
 
 Install dependencies:
 ```
-pip install requests python-dotenv
+pip install python-kasa
 ```
 
 ## Setup
 
-**1. Get a SmartThings Personal Access Token**
+**1. Find your strip's local IP**
 
-- Go to [account.smartthings.com](https://account.smartthings.com)
-- Personal Access Tokens → Generate New Token
-- Give it Devices (read + execute) permissions
-- Copy the token. It's only shown once
-
-**2. Get your device IDs**
-
-Uncomment the GET DEVICE NAMES block in the script and run it once. It will print all your SmartThings device IDs and labels. Copy the ones you need.
-
-**3. Create a `.env` file**
-
-Create a `.env` file in the same directory as the script:
-
+Run the following in your terminal to discover devices on your network. (python-kasa must already be installed):
 ```
-token=your_smartthings_pat_here
-wlc=your_device_id_here
-sp=your_device_id_here
-rsp=your_device_id_here
-lsp=your_device_id_here
-sub=your_device_id_here
-mon=your_device_id_here
-usb=your_device_id_here
+kasa discover
+```
+
+Note the IP address of your HS300.
+
+**2. Name your outlets**
+
+In the Kasa app, name the outlets you want to control (e.g. LSpeaker, RSpeaker, Subwoofer). The script matches by name.
+
+**3. Update the script**
+
+Edit these two lines in `speaker.py` to match your setup:
+```python
+STRIP_IP = "your.strip.ip.here"
+SPEAKER_NAMES = ["YourOutlet1", "YourOutlet2", "YourOutlet3"]
 ```
 
 **4. Create bat files**
@@ -57,16 +51,18 @@ usb=your_device_id_here
 `speakers_on.bat`:
 ```bat
 @echo off
-call C:\Users\YourName\anaconda3\Scripts\activate.bat
-python "C:\path\to\speaker.py" on
+call C:\Users\YOURUSERNAME\anaconda3\Scripts\activate.bat
+python "C:\Users\YOURUSERNAME\Documents\YOURSAVEPATH\speaker.py" on
 ```
 
 `speakers_off.bat`:
 ```bat
 @echo off
-call C:\Users\YourName\anaconda3\Scripts\activate.bat
-python "C:\path\to\speaker.py" off
+call C:\Users\YOURUSERNAME\anaconda3\Scripts\activate.bat
+python "C:\Users\YOURUSERNAME\Documents\YOURSAVEPATH\speaker.py" off
 ```
+
+Update the paths to match your system.
 
 **5. Set up Task Scheduler**
 
@@ -76,8 +72,6 @@ Create two tasks in Windows Task Scheduler:
 |------|---------|----------|----------|
 | Speakers On | At log on of any user | At workstation unlock of any user | speakers_on.bat |
 | Speakers Off | System, User32, ID 1074 | At workstation lock of any user | speakers_off.bat |
-
-
 
 ## Usage
 
@@ -89,4 +83,4 @@ python speaker.py off
 
 ## Adding More Devices
 
-All SmartThings devices are stored in the `devices` dict and loaded from `.env`. To control additional outlets, add their IDs to `.env` and update the `devices` dict and `speakers` list in the script. Feel free to mix and match based on the smart devices you have!
+Update `SPEAKER_NAMES` to include any additional outlet names from your HS300. They must match the outlet names exactly as set in the Kasa app.
