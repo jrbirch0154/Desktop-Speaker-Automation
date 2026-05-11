@@ -4,7 +4,7 @@ Automatically turns on/off desktop speakers (and other smart devices) based on P
 
 ## How It Works
 
-The script communicates directly with a Kasa HS300 smart power strip over the local network using the `python-kasa` library. No cloud account or API token required. It targets three specific outlets by name and toggles them simultaneously using `asyncio.gather()`.
+The script communicates directly with a Kasa HS300 smart power strip over the local network using the `python-kasa` library. No cloud account or API token required. It targets three specific outlets by name and toggles them simultaneously using `asyncio.gather()`. I chose to do this simultaneously, as calling each one by one adds time to the script, and sometimes did not complete in time before my computer shut down.
 
 Windows Task Scheduler triggers the script on four events:
 - Startup → speakers on
