@@ -1,74 +1,38 @@
-# Speaker Starting
-# Sat May 9 2026
+# Speaker try 2
+# Sun May 10 22:15:41 2026
 # Jacob Birch
 
-import requests
+# %% Initializing
+
+import asyncio
+# from kasa import Device -> would be the better alternative for more modern strips
+from kasa.iot import IotStrip
 import sys
-from dotenv import load_dotenv
-import os
-from concurrent.futures import ThreadPoolExecutor
 
-load_dotenv()
-
-token = os.getenv('token')
-wlc = os.getenv('wlc') # Laptop Charger
-sp = os.getenv('sp') # Smart Plug
-rsp = os.getenv('rsp') # Right Speaker
-lsp = os.getenv('lsp') # Left Speaker
-sub = os.getenv('sub') # Subwoofer
-mon = os.getenv('mon') # Monitor
-usb = os.getenv('usb') # USB Hub
-
-HEADERS = {'Authorization':  f'Bearer {token}'}
+STRIP_IP = "192.168.0.7"
+SPEAKER_NAMES = ["LSpeaker", "RSpeaker", "Subwoofer"]
 
 
-# =============================================================================
-# # GET DEVICE NAMES
-# 
-# URL = 'https://api.smartthings.com/v1/devices/'
-# 
-# response = requests.get(URL,headers=HEADERS)
-# 
-# data = response.json()
-# 
-# for device in data['items']:
-#     print(device['deviceId'], device['label'])
-# =============================================================================
-
-devices = {
-    'work laptop charger': wlc,
-    'Smart Plug': sp,
-    'RSpeaker': rsp,
-    'LSpeaker': lsp,
-    'Subwoofer': sub,
-    'Monitor': mon,
-    'USB Hub': usb  
-    }
-
-on = '{"commands":[{"component":"main","capability":"switch","command":"on"}]}'
-off = '{"commands":[{"component":"main","capability":"switch","command":"off"}]}'
-
-speakers = [devices['RSpeaker'],devices['LSpeaker'],devices['Subwoofer']]
-
-URL = []
-for numb in speakers:
-    URL.append(f'https://api.smartthings.com/v1/devices/{numb}/commands')
-    
-    
-def speakers(body,headers=HEADERS,urls=URL):
-    def post(url):
-        requests.post(url,headers=headers,data=body,timeout=3)
-        
-    with ThreadPoolExecutor() as executor:
-        executor.map(post, urls)
-        
-        
-        
-if __name__ == '__main__':
-        
-    if sys.argv[1] == 'on':
-        speakers(on)
-    elif sys.argv[1] == 'off':
-        speakers(off)
+async def toggle(child, state: bool):
+    if state:
+        await child.turn_on()
     else:
-        print(f'Invalid input: {sys.argv[1]}.')
+        await child.turn_off()
+
+
+async def control_speakers(state: bool):
+    strip = IotStrip(STRIP_IP)
+    await strip.update()
+    speakers = [c for c in strip.children if c.alias in SPEAKER_NAMES]
+    await asyncio.gather(*[toggle(c, state) for c in speakers])
+
+
+if __name__ == "__main__":
+    if sys.argv[1] == "on":
+        asyncio.run(control_speakers(True))
+
+    elif sys.argv[1] == "off":
+        asyncio.run(control_speakers(False))
+
+    else:
+        print(f"Invalid input: {sys.argv[1]}.")
